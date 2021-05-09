@@ -11,3 +11,7 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+
+# laravel/sail
+supervisord.log
+supervisord.pid
