@@ -16,3 +16,7 @@ yarn-error.log
 # laravel/sail
 supervisord.log
 supervisord.pid
+
+# barryvdh/laravel-ide-helper
+_ide_helper_models.php
+_ide_helper.php
