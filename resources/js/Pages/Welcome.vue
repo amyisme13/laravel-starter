@@ -288,13 +288,19 @@
 }
 </style>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   props: {
     canLogin: Boolean,
     canRegister: Boolean,
     laravelVersion: String,
     phpVersion: String,
   },
-};
+
+  setup() {
+    return { route: window.route };
+  },
+});
 </script>

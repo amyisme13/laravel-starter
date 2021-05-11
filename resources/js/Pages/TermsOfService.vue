@@ -15,14 +15,18 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
 
-export default {
-  props: ['terms'],
-
+export default defineComponent({
   components: {
     JetAuthenticationCardLogo,
   },
-};
+
+  props: {
+    terms: String,
+  },
+});
 </script>

@@ -16,16 +16,18 @@
   </app-layout>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
 import ApiTokenManager from './ApiTokenManager.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
-export default {
+export default defineComponent({
   props: ['tokens', 'availablePermissions', 'defaultPermissions'],
 
   components: {
     ApiTokenManager,
     AppLayout,
   },
-};
+});
 </script>

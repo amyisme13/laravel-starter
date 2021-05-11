@@ -24,13 +24,6 @@ createApp({
       },
     }),
 })
-  .mixin({
-    methods: {
-      // @ts-ignore
-      // route is taken from global
-      route,
-    },
-  })
   .use(InertiaPlugin)
   .mount(el);
 

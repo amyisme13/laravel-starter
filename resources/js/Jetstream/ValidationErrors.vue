@@ -8,16 +8,16 @@
   </div>
 </template>
 
-<script>
-export default {
-  computed: {
-    errors() {
-      return this.$page.props.errors;
-    },
+<script lang="ts">
+import { usePage } from '@inertiajs/inertia-vue3';
+import { computed, defineComponent } from 'vue';
 
-    hasErrors() {
-      return Object.keys(this.errors).length > 0;
-    },
+export default defineComponent({
+  setup() {
+    const errors = computed(() => usePage().props.value.errors);
+    const hasErrors = computed(() => Object.keys(errors.value).length > 0);
+
+    return { errors, hasErrors };
   },
-};
+});
 </script>

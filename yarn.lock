@@ -274,6 +274,11 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
+"@types/ziggy-js@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/ziggy-js/-/ziggy-js-1.0.1.tgz#4cfc98ec099555064ba158df6f365c00543fdcf4"
+  integrity sha512-ZnYSbq+8kx2CoddmD0J0lfoT9E3+MQ3FbylMek4j4ucfH2Ta+uj52cnDvM9IQ3ILGa5m2kL1assOhZ8qfzWE/A==
+
 "@typescript-eslint/eslint-plugin@^4.22.1":
   version "4.22.1"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-4.22.1.tgz#6bcdbaa4548553ab861b4e5f34936ead1349a543"
@@ -1992,7 +1997,7 @@ q@^1.5.1:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
-qs@^6.9.0:
+qs@^6.8.0, qs@^6.9.0:
   version "6.10.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.10.1.tgz#4931482fa8d647a5aab799c5271d2133b981fb6a"
   integrity sha512-M528Hph6wsSVOBiYUnGf+K/7w0hNshs/duGsNXPUCLH5XAqjEtiPGwNONLV0tBH8NoGb0mvD5JubnUTrujKDTg==
@@ -2561,3 +2566,10 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+ziggy-js@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/ziggy-js/-/ziggy-js-1.1.0.tgz#f5057cf5b199b8d747cec301ea4b50dfc32eadd7"
+  integrity sha512-y0shWe8mSOuY+WpjFw9ae3CTV+EyCQzICWhxHIbAj8h0gnygdViYA/KAg9FRbCyFuT0rine3CX+hfFhTRvYH7A==
+  dependencies:
+    qs "^6.8.0"

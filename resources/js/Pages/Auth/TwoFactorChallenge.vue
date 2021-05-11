@@ -35,7 +35,7 @@
       <div v-else>
         <jet-label for="recovery_code" value="Recovery Code" />
         <jet-input
-          ref="recovery_code"
+          ref="recoveryCode"
           id="recovery_code"
           type="text"
           class="mt-1 block w-full"
@@ -67,7 +67,10 @@
   </jet-authentication-card>
 </template>
 
-<script>
+<script lang="ts">
+import { useForm } from '@inertiajs/inertia-vue3';
+import { defineComponent, nextTick, ref } from 'vue';
+
 import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
 import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
 import JetButton from '@/Jetstream/Button.vue';
@@ -75,7 +78,7 @@ import JetInput from '@/Jetstream/Input.vue';
 import JetLabel from '@/Jetstream/Label.vue';
 import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
 
-export default {
+export default defineComponent({
   components: {
     JetAuthenticationCard,
     JetAuthenticationCardLogo,
@@ -85,34 +88,35 @@ export default {
     JetValidationErrors,
   },
 
-  data() {
-    return {
-      recovery: false,
-      form: this.$inertia.form({
-        code: '',
-        recovery_code: '',
-      }),
-    };
-  },
+  setup() {
+    const recovery = ref(false);
+    const form = useForm({
+      code: '',
+      recovery_code: '',
+    });
 
-  methods: {
-    toggleRecovery() {
-      this.recovery ^= true;
+    const recoveryCode = ref<HTMLInputElement>();
+    const code = ref<HTMLInputElement>();
 
-      this.$nextTick(() => {
-        if (this.recovery) {
-          this.$refs.recovery_code.focus();
-          this.form.code = '';
+    const toggleRecovery = () => {
+      recovery.value = !recovery.value;
+
+      nextTick(() => {
+        if (recovery.value) {
+          recoveryCode.value?.focus();
+          form.code = '';
         } else {
-          this.$refs.code.focus();
-          this.form.recovery_code = '';
+          code.value?.focus();
+          form.recovery_code = '';
         }
       });
-    },
+    };
 
-    submit() {
-      this.form.post(this.route('two-factor.login'));
-    },
+    const submit = () => {
+      form.post(window.route('two-factor.login'));
+    };
+
+    return { recovery, form, toggleRecovery, submit };
   },
-};
+});
 </script>

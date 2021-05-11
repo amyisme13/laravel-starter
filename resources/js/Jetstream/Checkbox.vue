@@ -7,30 +7,37 @@
   />
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { computed, defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
+type Checked = string[] | boolean;
+
+export default defineComponent({
   emits: ['update:checked'],
 
   props: {
     checked: {
-      type: [Array, Boolean],
+      type: [Array, Boolean] as PropType<Checked>,
       default: false,
     },
     value: {
-      default: null,
+      type: String,
     },
   },
 
-  computed: {
-    proxyChecked: {
-      get() {
-        return this.checked;
+  setup(props, { emit }) {
+    const proxyChecked = computed({
+      get(): Checked {
+        return props.checked;
       },
 
-      set(val) {
-        this.$emit('update:checked', val);
+      set(val: Checked) {
+        emit('update:checked', val);
       },
-    },
+    });
+
+    return { proxyChecked };
   },
-};
+});
 </script>

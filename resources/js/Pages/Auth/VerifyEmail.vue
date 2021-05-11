@@ -32,12 +32,15 @@
   </jet-authentication-card>
 </template>
 
-<script>
+<script lang="ts">
+import { useForm } from '@inertiajs/inertia-vue3';
+import { computed, defineComponent } from 'vue';
+
 import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
 import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
 import JetButton from '@/Jetstream/Button.vue';
 
-export default {
+export default defineComponent({
   components: {
     JetAuthenticationCard,
     JetAuthenticationCardLogo,
@@ -48,22 +51,18 @@ export default {
     status: String,
   },
 
-  data() {
-    return {
-      form: this.$inertia.form(),
+  setup(props) {
+    const { route } = window;
+
+    const form = useForm({});
+
+    const submit = () => {
+      form.post(route('verification.send'));
     };
-  },
 
-  methods: {
-    submit() {
-      this.form.post(this.route('verification.send'));
-    },
-  },
+    const verificationLinkSent = computed(() => props.status === 'verification-link-sent');
 
-  computed: {
-    verificationLinkSent() {
-      return this.status === 'verification-link-sent';
-    },
+    return { route, form, submit, verificationLinkSent };
   },
-};
+});
 </script>

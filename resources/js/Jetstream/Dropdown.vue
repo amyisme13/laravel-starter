@@ -30,10 +30,10 @@
   </div>
 </template>
 
-<script>
-import { onMounted, onUnmounted, ref } from 'vue';
+<script lang="ts">
+import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue';
 
-export default {
+export default defineComponent({
   props: {
     align: {
       default: 'right',
@@ -46,11 +46,11 @@ export default {
     },
   },
 
-  setup() {
+  setup(props) {
     let open = ref(false);
 
-    const closeOnEscape = (e) => {
-      if (open.value && e.keyCode === 27) {
+    const closeOnEscape = (e: KeyboardEvent) => {
+      if (open.value && e.key === 'Escape') {
         open.value = false;
       }
     };
@@ -58,27 +58,29 @@ export default {
     onMounted(() => document.addEventListener('keydown', closeOnEscape));
     onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
 
+    const widthClass = computed(() => {
+      return {
+        '48': 'w-48',
+      }[props.width.toString()];
+    });
+
+    const alignmentClasses = computed(() => {
+      if (props.align === 'left') {
+        return 'origin-top-left left-0';
+      }
+
+      if (props.align === 'right') {
+        return 'origin-top-right right-0';
+      }
+
+      return 'origin-top';
+    });
+
     return {
       open,
+      widthClass,
+      alignmentClasses,
     };
   },
-
-  computed: {
-    widthClass() {
-      return {
-        48: 'w-48',
-      }[this.width.toString()];
-    },
-
-    alignmentClasses() {
-      if (this.align === 'left') {
-        return 'origin-top-left left-0';
-      } else if (this.align === 'right') {
-        return 'origin-top-right right-0';
-      } else {
-        return 'origin-top';
-      }
-    },
-  },
-};
+});
 </script>

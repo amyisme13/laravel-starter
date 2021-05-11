@@ -7,13 +7,16 @@
   </button>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+import type { PropType, ButtonHTMLAttributes } from 'vue';
+
+export default defineComponent({
   props: {
     type: {
-      type: String,
+      type: String as PropType<ButtonHTMLAttributes['type']>,
       default: 'submit',
     },
   },
-};
+});
 </script>

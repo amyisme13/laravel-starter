@@ -14,7 +14,7 @@
           type="password"
           class="mt-1 block w-full"
           v-model="form.current_password"
-          ref="current_password"
+          ref="currentPassword"
           autocomplete="current-password"
         />
         <jet-input-error :message="form.errors.current_password" class="mt-2" />
@@ -56,7 +56,10 @@
   </jet-form-section>
 </template>
 
-<script>
+<script lang="ts">
+import { useForm } from '@inertiajs/inertia-vue3';
+import { defineComponent, ref } from 'vue';
+
 import JetActionMessage from '@/Jetstream/ActionMessage.vue';
 import JetButton from '@/Jetstream/Button.vue';
 import JetFormSection from '@/Jetstream/FormSection.vue';
@@ -64,7 +67,7 @@ import JetInput from '@/Jetstream/Input.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 import JetLabel from '@/Jetstream/Label.vue';
 
-export default {
+export default defineComponent({
   components: {
     JetActionMessage,
     JetButton,
@@ -74,35 +77,38 @@ export default {
     JetLabel,
   },
 
-  data() {
-    return {
-      form: this.$inertia.form({
-        current_password: '',
-        password: '',
-        password_confirmation: '',
-      }),
-    };
-  },
+  setup() {
+    const form = useForm({
+      current_password: '',
+      password: '',
+      password_confirmation: '',
+    });
 
-  methods: {
-    updatePassword() {
-      this.form.put(route('user-password.update'), {
+    const password = ref<HTMLInputElement>();
+    const currentPassword = ref<HTMLInputElement>();
+
+    const updatePassword = () => {
+      form.put(window.route('user-password.update'), {
         errorBag: 'updatePassword',
         preserveScroll: true,
-        onSuccess: () => this.form.reset(),
+        onSuccess: () => {
+          form.reset();
+        },
         onError: () => {
-          if (this.form.errors.password) {
-            this.form.reset('password', 'password_confirmation');
-            this.$refs.password.focus();
+          if (form.errors.password) {
+            form.reset('password', 'password_confirmation');
+            password.value?.focus();
           }
 
-          if (this.form.errors.current_password) {
-            this.form.reset('current_password');
-            this.$refs.current_password.focus();
+          if (form.errors.current_password) {
+            form.reset('current_password');
+            currentPassword.value?.focus();
           }
         },
       });
-    },
+    };
+
+    return { form, updatePassword };
   },
-};
+});
 </script>

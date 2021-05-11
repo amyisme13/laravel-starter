@@ -27,20 +27,21 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { computed, defineComponent } from 'vue';
 import JetSectionTitle from './SectionTitle.vue';
 
-export default {
-  emits: ['submitted'],
-
+export default defineComponent({
   components: {
     JetSectionTitle,
   },
 
-  computed: {
-    hasActions() {
-      return !!this.$slots.actions;
-    },
+  emits: ['submitted'],
+
+  setup(_, { slots }) {
+    const hasActions = computed(() => !!slots.actions);
+
+    return { hasActions };
   },
-};
+});
 </script>

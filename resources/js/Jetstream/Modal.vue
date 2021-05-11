@@ -36,10 +36,10 @@
   </teleport>
 </template>
 
-<script>
-import { onMounted, onUnmounted } from 'vue';
+<script lang="ts">
+import { computed, defineComponent, onMounted, onUnmounted, toRefs, watch } from 'vue';
 
-export default {
+export default defineComponent({
   emits: ['close'],
 
   props: {
@@ -54,27 +54,36 @@ export default {
     },
   },
 
-  watch: {
-    show: {
-      immediate: true,
-      handler: (show) => {
-        if (show) {
-          document.body.style.overflow = 'hidden';
-        } else {
-          document.body.style.overflow = null;
-        }
-      },
-    },
-  },
-
   setup(props, { emit }) {
+    const maxWidthClass = computed(() => {
+      return {
+        sm: 'sm:max-w-sm',
+        md: 'sm:max-w-md',
+        lg: 'sm:max-w-lg',
+        xl: 'sm:max-w-xl',
+        '2xl': 'sm:max-w-2xl',
+      }[props.maxWidth];
+    });
+
+    const { show } = toRefs(props);
+    const onShowChange = (show: boolean) => {
+      if (show) {
+        document.body.style.overflow = 'hidden';
+        return;
+      }
+
+      document.body.style.overflow = '';
+    };
+
+    watch(show, onShowChange, { immediate: true });
+
     const close = () => {
       if (props.closeable) {
         emit('close');
       }
     };
 
-    const closeOnEscape = (e) => {
+    const closeOnEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && props.show) {
         close();
       }
@@ -84,20 +93,9 @@ export default {
     onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
 
     return {
+      maxWidthClass,
       close,
     };
   },
-
-  computed: {
-    maxWidthClass() {
-      return {
-        sm: 'sm:max-w-sm',
-        md: 'sm:max-w-md',
-        lg: 'sm:max-w-lg',
-        xl: 'sm:max-w-xl',
-        '2xl': 'sm:max-w-2xl',
-      }[this.maxWidth];
-    },
-  },
-};
+});
 </script>

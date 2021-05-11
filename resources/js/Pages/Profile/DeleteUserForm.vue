@@ -55,7 +55,10 @@
   </jet-action-section>
 </template>
 
-<script>
+<script lang="ts">
+import { useForm } from '@inertiajs/inertia-vue3';
+import { defineComponent, ref } from 'vue';
+
 import JetActionSection from '@/Jetstream/ActionSection.vue';
 import JetDialogModal from '@/Jetstream/DialogModal.vue';
 import JetDangerButton from '@/Jetstream/DangerButton.vue';
@@ -63,7 +66,7 @@ import JetInput from '@/Jetstream/Input.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue';
 
-export default {
+export default defineComponent({
   components: {
     JetActionSection,
     JetDangerButton,
@@ -73,37 +76,34 @@ export default {
     JetSecondaryButton,
   },
 
-  data() {
-    return {
-      confirmingUserDeletion: false,
+  setup() {
+    const { route } = window;
 
-      form: this.$inertia.form({
-        password: '',
-      }),
+    const password = ref<HTMLInputElement>();
+    const confirmingUserDeletion = ref(false);
+    const confirmUserDeletion = () => {
+      confirmingUserDeletion.value = true;
+
+      setTimeout(() => password.value?.focus(), 250);
     };
-  },
 
-  methods: {
-    confirmUserDeletion() {
-      this.confirmingUserDeletion = true;
+    const form = useForm({ password: '' });
 
-      setTimeout(() => this.$refs.password.focus(), 250);
-    },
+    const closeModal = () => {
+      confirmingUserDeletion.value = false;
+      form.reset();
+    };
 
-    deleteUser() {
-      this.form.delete(route('current-user.destroy'), {
+    const deleteUser = () => {
+      form.delete(route('current-user.destroy'), {
         preserveScroll: true,
-        onSuccess: () => this.closeModal(),
-        onError: () => this.$refs.password.focus(),
-        onFinish: () => this.form.reset(),
+        onSuccess: () => closeModal(),
+        onError: () => password.value?.focus(),
+        onFinish: () => form.reset(),
       });
-    },
+    };
 
-    closeModal() {
-      this.confirmingUserDeletion = false;
-
-      this.form.reset();
-    },
+    return { confirmingUserDeletion, confirmUserDeletion, form, closeModal, deleteUser };
   },
-};
+});
 </script>

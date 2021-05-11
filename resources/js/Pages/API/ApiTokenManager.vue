@@ -114,9 +114,9 @@
 
         <div
           class="mt-4 bg-gray-100 px-4 py-2 rounded font-mono text-sm text-gray-500"
-          v-if="$page.props.jetstream.flash.token"
+          v-if="$page.props.jetstream.flash?.token"
         >
-          {{ $page.props.jetstream.flash.token }}
+          {{ $page.props.jetstream.flash?.token }}
         </div>
       </template>
 
@@ -126,7 +126,7 @@
     </jet-dialog-modal>
 
     <!-- API Token Permissions Modal -->
-    <jet-dialog-modal :show="managingPermissionsFor" @close="managingPermissionsFor = null">
+    <jet-dialog-modal :show="!!managingPermissionsFor" @close="managingPermissionsFor = undefined">
       <template #title> API Token Permissions </template>
 
       <template #content>
@@ -141,7 +141,9 @@
       </template>
 
       <template #footer>
-        <jet-secondary-button @click="managingPermissionsFor = null"> Cancel </jet-secondary-button>
+        <jet-secondary-button @click="managingPermissionsFor = undefined">
+          Cancel
+        </jet-secondary-button>
 
         <jet-button
           class="ml-2"
@@ -155,13 +157,18 @@
     </jet-dialog-modal>
 
     <!-- Delete Token Confirmation Modal -->
-    <jet-confirmation-modal :show="apiTokenBeingDeleted" @close="apiTokenBeingDeleted = null">
+    <jet-confirmation-modal
+      :show="!!apiTokenBeingDeleted"
+      @close="apiTokenBeingDeleted = undefined"
+    >
       <template #title> Delete API Token </template>
 
       <template #content> Are you sure you would like to delete this API token? </template>
 
       <template #footer>
-        <jet-secondary-button @click="apiTokenBeingDeleted = null"> Cancel </jet-secondary-button>
+        <jet-secondary-button @click="apiTokenBeingDeleted = undefined">
+          Cancel
+        </jet-secondary-button>
 
         <jet-danger-button
           class="ml-2"
@@ -176,7 +183,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { useForm } from '@inertiajs/inertia-vue3';
+import { defineComponent, ref } from 'vue';
+import type { PropType } from 'vue';
+
 import JetActionMessage from '@/Jetstream/ActionMessage.vue';
 import JetActionSection from '@/Jetstream/ActionSection.vue';
 import JetButton from '@/Jetstream/Button.vue';
@@ -191,7 +202,14 @@ import JetLabel from '@/Jetstream/Label.vue';
 import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue';
 import JetSectionBorder from '@/Jetstream/SectionBorder.vue';
 
-export default {
+interface Token {
+  id: number;
+  name: string;
+  abilities: string[];
+  last_used_ago: string;
+}
+
+export default defineComponent({
   components: {
     JetActionMessage,
     JetActionSection,
@@ -208,63 +226,91 @@ export default {
     JetSectionBorder,
   },
 
-  props: ['tokens', 'availablePermissions', 'defaultPermissions'],
-
-  data() {
-    return {
-      createApiTokenForm: this.$inertia.form({
-        name: '',
-        permissions: this.defaultPermissions,
-      }),
-
-      updateApiTokenForm: this.$inertia.form({
-        permissions: [],
-      }),
-
-      deleteApiTokenForm: this.$inertia.form(),
-
-      displayingToken: false,
-      managingPermissionsFor: null,
-      apiTokenBeingDeleted: null,
-    };
+  props: {
+    tokens: {
+      type: Array as PropType<Token[]>,
+      required: true,
+    },
+    availablePermissions: {
+      type: Array as PropType<string[]>,
+      required: true,
+    },
+    defaultPermissions: {
+      type: Array as PropType<string[]>,
+      required: true,
+    },
   },
 
-  methods: {
-    createApiToken() {
-      this.createApiTokenForm.post(route('api-tokens.store'), {
+  setup(props) {
+    const { route } = window;
+
+    const createApiTokenForm = useForm({
+      name: '',
+      permissions: props.defaultPermissions,
+    });
+
+    const displayingToken = ref(false);
+
+    const createApiToken = () => {
+      createApiTokenForm.post(route('api-tokens.create'), {
         preserveScroll: true,
         onSuccess: () => {
-          this.displayingToken = true;
-          this.createApiTokenForm.reset();
+          displayingToken.value = true;
+          createApiTokenForm.reset();
         },
       });
-    },
+    };
 
-    manageApiTokenPermissions(token) {
-      this.updateApiTokenForm.permissions = token.abilities;
+    const managingPermissionsFor = ref<Token>();
+    const updateApiTokenForm = useForm<{ permissions: string[] }>({
+      permissions: [],
+    });
 
-      this.managingPermissionsFor = token;
-    },
+    const manageApiTokenPermissions = (token: Token) => {
+      updateApiTokenForm.permissions = token.abilities;
+      managingPermissionsFor.value = token;
+    };
 
-    updateApiToken() {
-      this.updateApiTokenForm.put(route('api-tokens.update', this.managingPermissionsFor), {
+    const updateApiToken = () => {
+      if (managingPermissionsFor.value === undefined) return;
+
+      updateApiTokenForm.put(route('api-tokens.update', managingPermissionsFor.value), {
         preserveScroll: true,
         preserveState: true,
-        onSuccess: () => (this.managingPermissionsFor = null),
+        onSuccess: () => (managingPermissionsFor.value = undefined),
       });
-    },
+    };
 
-    confirmApiTokenDeletion(token) {
-      this.apiTokenBeingDeleted = token;
-    },
+    const apiTokenBeingDeleted = ref<Token>();
+    const deleteApiTokenForm = useForm({});
 
-    deleteApiToken() {
-      this.deleteApiTokenForm.delete(route('api-tokens.destroy', this.apiTokenBeingDeleted), {
+    const confirmApiTokenDeletion = (token: Token) => {
+      apiTokenBeingDeleted.value = token;
+    };
+
+    const deleteApiToken = () => {
+      if (apiTokenBeingDeleted.value === undefined) return;
+
+      deleteApiTokenForm.delete(route('api-tokens.destroy', apiTokenBeingDeleted.value), {
         preserveScroll: true,
         preserveState: true,
-        onSuccess: () => (this.apiTokenBeingDeleted = null),
+        onSuccess: () => (apiTokenBeingDeleted.value = undefined),
       });
-    },
+    };
+
+    return {
+      createApiTokenForm,
+      displayingToken,
+      createApiToken,
+      managingPermissionsFor,
+      updateApiTokenForm,
+      manageApiTokenPermissions,
+      updateApiToken,
+      apiTokenBeingDeleted,
+      deleteApiTokenForm,
+      confirmApiTokenDeletion,
+      deleteApiToken,
+    };
   },
-};
+});
 </script>

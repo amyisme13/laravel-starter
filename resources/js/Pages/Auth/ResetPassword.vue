@@ -52,7 +52,10 @@
   </jet-authentication-card>
 </template>
 
-<script>
+<script lang="ts">
+import { useForm } from '@inertiajs/inertia-vue3';
+import { defineComponent } from 'vue';
+
 import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
 import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
 import JetButton from '@/Jetstream/Button.vue';
@@ -60,7 +63,7 @@ import JetInput from '@/Jetstream/Input.vue';
 import JetLabel from '@/Jetstream/Label.vue';
 import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
 
-export default {
+export default defineComponent({
   components: {
     JetAuthenticationCard,
     JetAuthenticationCardLogo,
@@ -75,23 +78,21 @@ export default {
     token: String,
   },
 
-  data() {
-    return {
-      form: this.$inertia.form({
-        token: this.token,
-        email: this.email,
-        password: '',
-        password_confirmation: '',
-      }),
-    };
-  },
+  setup(props) {
+    const form = useForm({
+      token: props.token,
+      email: props.email,
+      password: '',
+      password_confirmation: '',
+    });
 
-  methods: {
-    submit() {
-      this.form.post(this.route('password.update'), {
-        onFinish: () => this.form.reset('password', 'password_confirmation'),
+    const submit = () => {
+      form.post(window.route('password.update'), {
+        onFinish: () => form.reset('password', 'password_confirmation'),
       });
-    },
+    };
+
+    return { form, submit };
   },
-};
+});
 </script>

@@ -82,22 +82,18 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      show: true,
-    };
-  },
+<script lang="ts">
+import { usePage } from '@inertiajs/inertia-vue3';
+import { computed, defineComponent, ref } from 'vue';
 
-  computed: {
-    style() {
-      return this.$page.props.jetstream.flash?.bannerStyle || 'success';
-    },
+export default defineComponent({
+  setup() {
+    const show = ref(true);
 
-    message() {
-      return this.$page.props.jetstream.flash?.banner || '';
-    },
+    const style = computed(() => usePage().props.value.jetstream.flash?.bannerStyle || 'success');
+    const message = computed(() => usePage().props.value.jetstream.flash?.banner || '');
+
+    return { show, style, message };
   },
-};
+});
 </script>

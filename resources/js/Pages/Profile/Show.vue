@@ -6,7 +6,7 @@
 
     <div>
       <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-        <div v-if="$page.props.jetstream.canUpdateProfileInformation">
+        <div v-if="$page.props.jetstream.canUpdateProfileInformation && $page.props.user">
           <update-profile-information-form :user="$page.props.user" />
 
           <jet-section-border />
@@ -36,18 +36,19 @@
   </app-layout>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+import type { PropType } from 'vue';
+
 import AppLayout from '@/Layouts/AppLayout.vue';
 import DeleteUserForm from './DeleteUserForm.vue';
 import JetSectionBorder from '@/Jetstream/SectionBorder.vue';
-import LogoutOtherBrowserSessionsForm from './LogoutOtherBrowserSessionsForm.vue';
+import LogoutOtherBrowserSessionsForm, { Session } from './LogoutOtherBrowserSessionsForm.vue';
 import TwoFactorAuthenticationForm from './TwoFactorAuthenticationForm.vue';
 import UpdatePasswordForm from './UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './UpdateProfileInformationForm.vue';
 
-export default {
-  props: ['sessions'],
-
+export default defineComponent({
   components: {
     AppLayout,
     DeleteUserForm,
@@ -57,5 +58,12 @@ export default {
     UpdatePasswordForm,
     UpdateProfileInformationForm,
   },
-};
+
+  props: {
+    sessions: {
+      type: Array as PropType<Session[]>,
+      required: true,
+    },
+  },
+});
 </script>
