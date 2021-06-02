@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Generate API Token -->
-    <jet-form-section @submitted="createApiToken">
+    <FormSection @submitted="createApiToken">
       <template #title> Create API Token </template>
 
       <template #description>
@@ -11,29 +11,20 @@
       <template #form>
         <!-- Token Name -->
         <div class="col-span-6 sm:col-span-4">
-          <jet-label for="name" value="Name" />
-          <jet-input
-            id="name"
-            type="text"
-            class="mt-1 block w-full"
-            v-model="createApiTokenForm.name"
-            autofocus
-          />
-          <jet-input-error :message="createApiTokenForm.errors.name" class="mt-2" />
+          <Label for="name" value="Name" />
+          <Input id="name" type="text" class="mt-1" v-model="createApiTokenForm.name" autofocus />
+          <InputError :message="createApiTokenForm.errors.name" class="mt-2" />
         </div>
 
         <!-- Token Permissions -->
         <div class="col-span-6" v-if="availablePermissions.length > 0">
-          <jet-label for="permissions" value="Permissions" />
+          <Label for="permissions" value="Permissions" />
 
-          <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="mt-2 grid gap-4 grid-cols-1 md:grid-cols-2">
             <div v-for="permission in availablePermissions" :key="permission">
               <label class="flex items-center">
-                <jet-checkbox
-                  :value="permission"
-                  v-model:checked="createApiTokenForm.permissions"
-                />
-                <span class="ml-2 text-sm text-gray-600">{{ permission }}</span>
+                <Checkbox :value="permission" v-model:checked="createApiTokenForm.permissions" />
+                <span class="text-sm ml-2 text-gray-600">{{ permission }}</span>
               </label>
             </div>
           </div>
@@ -41,25 +32,20 @@
       </template>
 
       <template #actions>
-        <jet-action-message :on="createApiTokenForm.recentlySuccessful" class="mr-3">
+        <ActionMessage :on="createApiTokenForm.recentlySuccessful" class="mr-3">
           Created.
-        </jet-action-message>
+        </ActionMessage>
 
-        <jet-button
-          :class="{ 'opacity-25': createApiTokenForm.processing }"
-          :disabled="createApiTokenForm.processing"
-        >
-          Create
-        </jet-button>
+        <Button :disabled="createApiTokenForm.processing" type="submit"> Create </Button>
       </template>
-    </jet-form-section>
+    </FormSection>
 
     <div v-if="tokens.length > 0">
-      <jet-section-border />
+      <SectionBorder />
 
       <!-- Manage API Tokens -->
       <div class="mt-10 sm:mt-0">
-        <jet-action-section>
+        <ActionSection>
           <template #title> Manage API Tokens </template>
 
           <template #description>
@@ -84,7 +70,7 @@
                   </div>
 
                   <button
-                    class="cursor-pointer ml-6 text-sm text-gray-400 underline"
+                    class="cursor-pointer text-sm ml-6 text-gray-400 underline"
                     @click="manageApiTokenPermissions(token)"
                     v-if="availablePermissions.length > 0"
                   >
@@ -92,7 +78,7 @@
                   </button>
 
                   <button
-                    class="cursor-pointer ml-6 text-sm text-red-500"
+                    class="cursor-pointer text-sm ml-6 text-red-500"
                     @click="confirmApiTokenDeletion(token)"
                   >
                     Delete
@@ -101,85 +87,100 @@
               </div>
             </div>
           </template>
-        </jet-action-section>
+        </ActionSection>
       </div>
     </div>
 
     <!-- Token Value Modal -->
-    <jet-dialog-modal :show="displayingToken" @close="displayingToken = false">
+    <Modal :show="displayingToken" @close="displayingToken = false" :initial-focus="flashToken">
       <template #title> API Token </template>
 
-      <template #content>
-        <div>Please copy your new API token. For your security, it won't be shown again.</div>
+      <p class="text-sm text-gray-500">
+        Please copy your new API token. For your security, it won't be shown again.
+      </p>
 
-        <div
-          class="mt-4 bg-gray-100 px-4 py-2 rounded font-mono text-sm text-gray-500"
-          v-if="$page.props.jetstream.flash?.token"
-        >
-          {{ $page.props.jetstream.flash?.token }}
-        </div>
-      </template>
+      <Input
+        v-if="$page.props.jetstream.flash?.token"
+        readonly
+        ref="flashToken"
+        type="text"
+        v-model="$page.props.jetstream.flash.token"
+        class="mt-1"
+      />
 
       <template #footer>
-        <jet-secondary-button @click="displayingToken = false"> Close </jet-secondary-button>
+        <Button
+          class="w-full sm:(ml-3 w-auto text-sm)"
+          variant="secondary"
+          @click="displayingToken = false"
+        >
+          Close
+        </Button>
       </template>
-    </jet-dialog-modal>
+    </Modal>
 
     <!-- API Token Permissions Modal -->
-    <jet-dialog-modal :show="!!managingPermissionsFor" @close="managingPermissionsFor = undefined">
+    <Modal :show="!!managingPermissionsFor" @close="managingPermissionsFor = undefined">
       <template #title> API Token Permissions </template>
 
-      <template #content>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div v-for="permission in availablePermissions" :key="permission">
-            <label class="flex items-center">
-              <jet-checkbox :value="permission" v-model:checked="updateApiTokenForm.permissions" />
-              <span class="ml-2 text-sm text-gray-600">{{ permission }}</span>
-            </label>
-          </div>
+      <div class="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <div v-for="permission in availablePermissions" :key="permission">
+          <label class="flex items-center">
+            <Checkbox :value="permission" v-model:checked="updateApiTokenForm.permissions" />
+            <span class="text-sm ml-2 text-gray-600">{{ permission }}</span>
+          </label>
         </div>
-      </template>
+      </div>
 
       <template #footer>
-        <jet-secondary-button @click="managingPermissionsFor = undefined">
-          Cancel
-        </jet-secondary-button>
-
-        <jet-button
-          class="ml-2"
+        <Button
+          class="w-full sm:(ml-3 w-auto text-sm)"
           @click="updateApiToken"
-          :class="{ 'opacity-25': updateApiTokenForm.processing }"
           :disabled="updateApiTokenForm.processing"
+          type="submit"
         >
           Save
-        </jet-button>
+        </Button>
+
+        <Button
+          class="w-full sm:(ml-3 w-auto text-sm)"
+          variant="secondary"
+          @click="managingPermissionsFor = undefined"
+        >
+          Cancel
+        </Button>
       </template>
-    </jet-dialog-modal>
+    </Modal>
 
     <!-- Delete Token Confirmation Modal -->
-    <jet-confirmation-modal
-      :show="!!apiTokenBeingDeleted"
-      @close="apiTokenBeingDeleted = undefined"
-    >
+    <Modal :show="!!apiTokenBeingDeleted" @close="apiTokenBeingDeleted = undefined">
+      <template #icon>
+        <ExclamationIcon class="h-6 text-red-600 w-6" aria-hidden="true" />
+      </template>
+
       <template #title> Delete API Token </template>
 
-      <template #content> Are you sure you would like to delete this API token? </template>
+      <p class="text-sm text-gray-500">Are you sure you would like to delete this API token?</p>
 
       <template #footer>
-        <jet-secondary-button @click="apiTokenBeingDeleted = undefined">
-          Cancel
-        </jet-secondary-button>
-
-        <jet-danger-button
-          class="ml-2"
+        <Button
+          class="w-full sm:(ml-3 w-auto text-sm)"
           @click="deleteApiToken"
-          :class="{ 'opacity-25': deleteApiTokenForm.processing }"
           :disabled="deleteApiTokenForm.processing"
+          variant="danger"
         >
           Delete
-        </jet-danger-button>
+        </Button>
+
+        <Button
+          class="w-full sm:(ml-3 w-auto text-sm)"
+          variant="secondary"
+          @click="apiTokenBeingDeleted = undefined"
+        >
+          Cancel
+        </Button>
       </template>
-    </jet-confirmation-modal>
+    </Modal>
   </div>
 </template>
 
@@ -187,20 +188,18 @@
 import { useForm } from '@inertiajs/inertia-vue3';
 import { defineComponent, ref } from 'vue';
 import type { PropType } from 'vue';
+import { ExclamationIcon } from '@heroicons/vue/outline';
 
-import JetActionMessage from '@/Jetstream/ActionMessage.vue';
-import JetActionSection from '@/Jetstream/ActionSection.vue';
-import JetButton from '@/Jetstream/Button.vue';
-import JetConfirmationModal from '@/Jetstream/ConfirmationModal.vue';
-import JetDangerButton from '@/Jetstream/DangerButton.vue';
-import JetDialogModal from '@/Jetstream/DialogModal.vue';
-import JetFormSection from '@/Jetstream/FormSection.vue';
-import JetInput from '@/Jetstream/Input.vue';
-import JetCheckbox from '@/Jetstream/Checkbox.vue';
-import JetInputError from '@/Jetstream/InputError.vue';
-import JetLabel from '@/Jetstream/Label.vue';
-import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue';
-import JetSectionBorder from '@/Jetstream/SectionBorder.vue';
+import ActionMessage from '@/components/ActionMessage.vue';
+import ActionSection from '@/components/ActionSection.vue';
+import Button from '@/components/Elements/Button.vue';
+import Checkbox from '@/components/Elements/Checkbox.vue';
+import FormSection from '@/components/FormSection.vue';
+import Input from '@/components/Elements/Input.vue';
+import InputError from '@/components/Elements/InputError.vue';
+import Label from '@/components/Elements/Label.vue';
+import Modal from '@/components/Modal.vue';
+import SectionBorder from '@/components/SectionBorder.vue';
 
 interface Token {
   id: number;
@@ -211,19 +210,17 @@ interface Token {
 
 export default defineComponent({
   components: {
-    JetActionMessage,
-    JetActionSection,
-    JetButton,
-    JetConfirmationModal,
-    JetDangerButton,
-    JetDialogModal,
-    JetFormSection,
-    JetInput,
-    JetCheckbox,
-    JetInputError,
-    JetLabel,
-    JetSecondaryButton,
-    JetSectionBorder,
+    ActionMessage,
+    ActionSection,
+    Button,
+    Checkbox,
+    ExclamationIcon,
+    FormSection,
+    Input,
+    InputError,
+    Label,
+    Modal,
+    SectionBorder,
   },
 
   props: {
@@ -250,9 +247,10 @@ export default defineComponent({
     });
 
     const displayingToken = ref(false);
+    const flashToken = ref<HTMLInputElement>();
 
     const createApiToken = () => {
-      createApiTokenForm.post(route('api-tokens.create'), {
+      createApiTokenForm.post(route('api-tokens.store'), {
         preserveScroll: true,
         onSuccess: () => {
           displayingToken.value = true;
@@ -301,6 +299,7 @@ export default defineComponent({
     return {
       createApiTokenForm,
       displayingToken,
+      flashToken,
       createApiToken,
       managingPermissionsFor,
       updateApiTokenForm,

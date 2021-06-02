@@ -1,61 +1,49 @@
 <template>
-  <jet-authentication-card>
-    <template #logo>
-      <jet-authentication-card-logo />
-    </template>
-
-    <div class="mb-4 text-sm text-gray-600">
+  <AuthenticationCard>
+    <div class="text-sm mb-4 text-gray-600">
       This is a secure area of the application. Please confirm your password before continuing.
     </div>
 
-    <jet-validation-errors class="mb-4" />
+    <ValidationErrors class="mb-4" />
 
     <form @submit.prevent="submit">
       <div>
-        <jet-label for="password" value="Password" />
-        <jet-input
-          id="password"
-          type="password"
-          class="mt-1 block w-full"
-          v-model="form.password"
+        <Label for="password" value="Password" />
+        <Input
+          autofocus
           required
           autocomplete="current-password"
-          autofocus
+          class="mt-1"
+          id="password"
+          type="password"
+          v-model="form.password"
         />
       </div>
 
-      <div class="flex justify-end mt-4">
-        <jet-button
-          class="ml-4"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.processing"
-        >
-          Confirm
-        </jet-button>
+      <div class="flex mt-4 justify-end">
+        <Button class="ml-4" :disabled="form.processing" type="submit"> Confirm </Button>
       </div>
     </form>
-  </jet-authentication-card>
+  </AuthenticationCard>
 </template>
 
 <script lang="ts">
 import { useForm } from '@inertiajs/inertia-vue3';
 import { defineComponent } from 'vue';
 
-import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
-import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
-import JetButton from '@/Jetstream/Button.vue';
-import JetInput from '@/Jetstream/Input.vue';
-import JetLabel from '@/Jetstream/Label.vue';
-import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
+import AuthenticationCard from '@/components/AuthenticationCard.vue';
+import Button from '@/components/Elements/Button.vue';
+import Input from '@/components/Elements/Input.vue';
+import Label from '@/components/Elements/Label.vue';
+import ValidationErrors from '@/components/ValidationErrors.vue';
 
 export default defineComponent({
   components: {
-    JetAuthenticationCard,
-    JetAuthenticationCardLogo,
-    JetButton,
-    JetInput,
-    JetLabel,
-    JetValidationErrors,
+    AuthenticationCard,
+    Button,
+    Input,
+    Label,
+    ValidationErrors,
   },
 
   setup() {

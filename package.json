@@ -33,6 +33,8 @@
     "ziggy-js": "^1.1.0"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.2.0",
+    "@heroicons/vue": "^1.0.1",
     "@inertiajs/inertia": "^0.8.4",
     "@inertiajs/inertia-vue3": "^0.3.5",
     "@inertiajs/progress": "^0.2.4",

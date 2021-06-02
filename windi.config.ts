@@ -20,7 +20,7 @@ export default defineConfig({
 
   theme: {
     fontFamily: {
-      sans: ['Nunito', ...defaultTheme.fontFamily.sans],
+      sans: ['Inter var', ...defaultTheme.fontFamily.sans],
     },
   },
 });

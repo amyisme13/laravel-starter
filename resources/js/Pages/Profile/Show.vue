@@ -1,39 +1,39 @@
 <template>
-  <app-layout>
+  <AppLayout>
     <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">Profile</h2>
+      <h2 class="font-semibold text-xl leading-tight text-gray-800">Profile</h2>
     </template>
 
     <div>
-      <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl py-10 sm:px-6 lg:px-8">
         <div v-if="$page.props.jetstream.canUpdateProfileInformation && $page.props.user">
-          <update-profile-information-form :user="$page.props.user" />
+          <UpdateProfileInformationForm :user="$page.props.user" />
 
-          <jet-section-border />
+          <SectionBorder />
         </div>
 
         <div v-if="$page.props.jetstream.canUpdatePassword">
-          <update-password-form class="mt-10 sm:mt-0" />
+          <UpdatePasswordForm class="mt-10 sm:mt-0" />
 
-          <jet-section-border />
+          <SectionBorder />
         </div>
 
         <div v-if="$page.props.jetstream.canManageTwoFactorAuthentication">
-          <two-factor-authentication-form class="mt-10 sm:mt-0" />
+          <TwoFactorAuthenticationForm class="mt-10 sm:mt-0" />
 
-          <jet-section-border />
+          <SectionBorder />
         </div>
 
-        <logout-other-browser-sessions-form :sessions="sessions" class="mt-10 sm:mt-0" />
+        <LogoutOtherBrowserSessionsForm :sessions="sessions" class="mt-10 sm:mt-0" />
 
         <template v-if="$page.props.jetstream.hasAccountDeletionFeatures">
-          <jet-section-border />
+          <SectionBorder />
 
-          <delete-user-form class="mt-10 sm:mt-0" />
+          <DeleteUserForm class="mt-10 sm:mt-0" />
         </template>
       </div>
     </div>
-  </app-layout>
+  </AppLayout>
 </template>
 
 <script lang="ts">
@@ -42,8 +42,8 @@ import type { PropType } from 'vue';
 
 import AppLayout from '@/Layouts/AppLayout.vue';
 import DeleteUserForm from './DeleteUserForm.vue';
-import JetSectionBorder from '@/Jetstream/SectionBorder.vue';
 import LogoutOtherBrowserSessionsForm, { Session } from './LogoutOtherBrowserSessionsForm.vue';
+import SectionBorder from '@/components/SectionBorder.vue';
 import TwoFactorAuthenticationForm from './TwoFactorAuthenticationForm.vue';
 import UpdatePasswordForm from './UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './UpdateProfileInformationForm.vue';
@@ -52,8 +52,8 @@ export default defineComponent({
   components: {
     AppLayout,
     DeleteUserForm,
-    JetSectionBorder,
     LogoutOtherBrowserSessionsForm,
+    SectionBorder,
     TwoFactorAuthenticationForm,
     UpdatePasswordForm,
     UpdateProfileInformationForm,

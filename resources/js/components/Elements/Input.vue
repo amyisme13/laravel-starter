@@ -1,9 +1,9 @@
 <template>
   <input
-    class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
-    :value="modelValue"
+    class="rounded-md border-gray-300 shadow-sm w-full block sm:text-sm focus:(ring-indigo-500 border-indigo-500)"
     @input="onInput"
     ref="input"
+    :value="modelValue"
   />
 </template>
 
@@ -23,7 +23,7 @@ export default defineComponent({
       emit('update:modelValue', (event.target as HTMLInputElement).value);
     };
 
-    return { focus, onInput };
+    return { input, focus, onInput };
   },
 });
 </script>

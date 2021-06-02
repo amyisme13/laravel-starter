@@ -1,44 +1,49 @@
 <template>
   <span>
     <span @click="startConfirmingPassword">
-      <slot />
+      <slot></slot>
     </span>
 
-    <jet-dialog-modal :show="confirmingPassword" @close="closeModal">
+    <Modal :show="confirmingPassword" @close="closeModal" :initial-focus="password">
       <template #title>
         {{ title }}
       </template>
 
-      <template #content>
+      <p class="text-sm text-gray-500">
         {{ content }}
+      </p>
 
-        <div class="mt-4">
-          <jet-input
-            type="password"
-            class="mt-1 block w-3/4"
-            placeholder="Password"
-            ref="password"
-            v-model="form.password"
-            @keyup.enter="confirmPassword"
-          />
+      <div class="mt-4">
+        <Input
+          type="password"
+          placeholder="Password"
+          ref="password"
+          v-model="form.password"
+          @keyup.enter="confirmPassword"
+        />
 
-          <jet-input-error :message="form.error" class="mt-2" />
-        </div>
-      </template>
+        <InputError :message="form.error" class="mt-2" />
+      </div>
 
       <template #footer>
-        <jet-secondary-button @click="closeModal"> Cancel </jet-secondary-button>
-
-        <jet-button
-          class="ml-2"
+        <Button
+          class="w-full sm:(ml-3 w-auto text-sm)"
           @click="confirmPassword"
-          :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
+          type="submit"
         >
           {{ button }}
-        </jet-button>
+        </Button>
+
+        <Button
+          class="mt-3 w-full sm:(mt-0 ml-3 w-auto text-sm)"
+          @click="closeModal"
+          variant="secondary"
+        >
+          Cancel
+        </Button>
       </template>
-    </jet-dialog-modal>
+    </Modal>
   </span>
 </template>
 
@@ -46,19 +51,17 @@
 import axios from 'axios';
 import { defineComponent, nextTick, reactive, ref } from 'vue';
 
-import JetButton from './Button.vue';
-import JetDialogModal from './DialogModal.vue';
-import JetInput from './Input.vue';
-import JetInputError from './InputError.vue';
-import JetSecondaryButton from './SecondaryButton.vue';
+import Button from '@/components/Elements/Button.vue';
+import Modal from '@/components/Modal.vue';
+import Input from '@/components/Elements/Input.vue';
+import InputError from '@/components/Elements/InputError.vue';
 
 export default defineComponent({
   components: {
-    JetButton,
-    JetDialogModal,
-    JetInput,
-    JetInputError,
-    JetSecondaryButton,
+    Button,
+    Modal,
+    Input,
+    InputError,
   },
 
   emits: ['confirmed'],
@@ -100,7 +103,6 @@ export default defineComponent({
       }
 
       confirmingPassword.value = true;
-      setTimeout(() => password.value?.focus(), 250);
     };
 
     const confirmPassword = async () => {
@@ -122,8 +124,8 @@ export default defineComponent({
     };
 
     return {
-      route,
       form,
+      password,
       confirmingPassword,
       closeModal,
       startConfirmingPassword,

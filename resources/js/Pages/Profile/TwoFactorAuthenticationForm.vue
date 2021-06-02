@@ -1,5 +1,5 @@
 <template>
-  <jet-action-section>
+  <ActionSection>
     <template #title> Two Factor Authentication </template>
 
     <template #description>
@@ -32,7 +32,7 @@
             </p>
           </div>
 
-          <div class="mt-4 dark:p-4 dark:w-56 dark:bg-white" v-html="qrCode"></div>
+          <div class="mt-4 dark:(p-4 w-56 bg-white)" v-html="qrCode"></div>
         </div>
 
         <div v-if="recoveryCodes.length > 0">
@@ -53,56 +53,48 @@
 
       <div class="mt-5">
         <div v-if="!twoFactorEnabled">
-          <jet-confirms-password @confirmed="enableTwoFactorAuthentication">
-            <jet-button type="button" :class="{ 'opacity-25': enabling }" :disabled="enabling">
-              Enable
-            </jet-button>
-          </jet-confirms-password>
+          <ConfirmsPassword @confirmed="enableTwoFactorAuthentication">
+            <Button :disabled="enabling"> Enable </Button>
+          </ConfirmsPassword>
         </div>
 
         <div v-else>
-          <jet-confirms-password @confirmed="regenerateRecoveryCodes">
-            <jet-secondary-button class="mr-3" v-if="recoveryCodes.length > 0">
+          <ConfirmsPassword @confirmed="regenerateRecoveryCodes">
+            <Button variant="secondary" class="mr-3" v-if="recoveryCodes.length > 0">
               Regenerate Recovery Codes
-            </jet-secondary-button>
-          </jet-confirms-password>
+            </Button>
+          </ConfirmsPassword>
 
-          <jet-confirms-password @confirmed="showRecoveryCodes">
-            <jet-secondary-button class="mr-3" v-if="recoveryCodes.length === 0">
+          <ConfirmsPassword @confirmed="showRecoveryCodes">
+            <Button variant="secondary" class="mr-3" v-if="recoveryCodes.length === 0">
               Show Recovery Codes
-            </jet-secondary-button>
-          </jet-confirms-password>
+            </Button>
+          </ConfirmsPassword>
 
-          <jet-confirms-password @confirmed="disableTwoFactorAuthentication">
-            <jet-danger-button :class="{ 'opacity-25': disabling }" :disabled="disabling">
-              Disable
-            </jet-danger-button>
-          </jet-confirms-password>
+          <ConfirmsPassword @confirmed="disableTwoFactorAuthentication">
+            <Button variant="danger" :disabled="disabling"> Disable </Button>
+          </ConfirmsPassword>
         </div>
       </div>
     </template>
-  </jet-action-section>
+  </ActionSection>
 </template>
 
 <script lang="ts">
+import { usePage } from '@inertiajs/inertia-vue3';
+import { Inertia } from '@inertiajs/inertia';
 import axios from 'axios';
 import { computed, defineComponent, ref } from 'vue';
 
-import JetActionSection from '@/Jetstream/ActionSection.vue';
-import JetButton from '@/Jetstream/Button.vue';
-import JetConfirmsPassword from '@/Jetstream/ConfirmsPassword.vue';
-import JetDangerButton from '@/Jetstream/DangerButton.vue';
-import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue';
-import { usePage } from '@inertiajs/inertia-vue3';
-import { Inertia } from '@inertiajs/inertia';
+import ActionSection from '@/components/ActionSection.vue';
+import Button from '@/components/Elements/Button.vue';
+import ConfirmsPassword from '@/components/ConfirmsPassword.vue';
 
 export default defineComponent({
   components: {
-    JetActionSection,
-    JetButton,
-    JetConfirmsPassword,
-    JetDangerButton,
-    JetSecondaryButton,
+    ActionSection,
+    Button,
+    ConfirmsPassword,
   },
 
   setup() {

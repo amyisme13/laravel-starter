@@ -1,5 +1,5 @@
 <template>
-  <jet-form-section @submitted="updatePassword">
+  <FormSection @submitted="updatePassword">
     <template #title> Update Password </template>
 
     <template #description>
@@ -8,73 +8,71 @@
 
     <template #form>
       <div class="col-span-6 sm:col-span-4">
-        <jet-label for="current_password" value="Current Password" />
-        <jet-input
+        <Label for="current_password" value="Current Password" />
+        <Input
           id="current_password"
           type="password"
-          class="mt-1 block w-full"
           v-model="form.current_password"
           ref="currentPassword"
           autocomplete="current-password"
+          class="mt-1"
         />
-        <jet-input-error :message="form.errors.current_password" class="mt-2" />
+        <InputError :message="form.errors.current_password" class="mt-2" />
       </div>
 
       <div class="col-span-6 sm:col-span-4">
-        <jet-label for="password" value="New Password" />
-        <jet-input
+        <Label for="password" value="New Password" />
+        <Input
           id="password"
           type="password"
-          class="mt-1 block w-full"
           v-model="form.password"
           ref="password"
           autocomplete="new-password"
+          class="mt-1"
         />
-        <jet-input-error :message="form.errors.password" class="mt-2" />
+        <InputError :message="form.errors.password" class="mt-2" />
       </div>
 
       <div class="col-span-6 sm:col-span-4">
-        <jet-label for="password_confirmation" value="Confirm Password" />
-        <jet-input
+        <Label for="password_confirmation" value="Confirm Password" />
+        <Input
           id="password_confirmation"
           type="password"
-          class="mt-1 block w-full"
           v-model="form.password_confirmation"
           autocomplete="new-password"
+          class="mt-1"
         />
-        <jet-input-error :message="form.errors.password_confirmation" class="mt-2" />
+        <InputError :message="form.errors.password_confirmation" class="mt-2" />
       </div>
     </template>
 
     <template #actions>
-      <jet-action-message :on="form.recentlySuccessful" class="mr-3"> Saved. </jet-action-message>
+      <ActionMessage :on="form.recentlySuccessful" class="mr-3"> Saved. </ActionMessage>
 
-      <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-        Save
-      </jet-button>
+      <Button :disabled="form.processing" type="submit"> Save </Button>
     </template>
-  </jet-form-section>
+  </FormSection>
 </template>
 
 <script lang="ts">
 import { useForm } from '@inertiajs/inertia-vue3';
 import { defineComponent, ref } from 'vue';
 
-import JetActionMessage from '@/Jetstream/ActionMessage.vue';
-import JetButton from '@/Jetstream/Button.vue';
-import JetFormSection from '@/Jetstream/FormSection.vue';
-import JetInput from '@/Jetstream/Input.vue';
-import JetInputError from '@/Jetstream/InputError.vue';
-import JetLabel from '@/Jetstream/Label.vue';
+import ActionMessage from '@/components/ActionMessage.vue';
+import Button from '@/components/Elements/Button.vue';
+import FormSection from '@/components/FormSection.vue';
+import Input from '@/components/Elements/Input.vue';
+import InputError from '@/components/Elements/InputError.vue';
+import Label from '@/components/Elements/Label.vue';
 
 export default defineComponent({
   components: {
-    JetActionMessage,
-    JetButton,
-    JetFormSection,
-    JetInput,
-    JetInputError,
-    JetLabel,
+    ActionMessage,
+    Button,
+    FormSection,
+    Input,
+    InputError,
+    Label,
   },
 
   setup() {
@@ -108,7 +106,7 @@ export default defineComponent({
       });
     };
 
-    return { form, updatePassword };
+    return { password, currentPassword, form, updatePassword };
   },
 });
 </script>

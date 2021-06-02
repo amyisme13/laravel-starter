@@ -1,89 +1,72 @@
 <template>
-  <jet-authentication-card>
-    <template #logo>
-      <jet-authentication-card-logo />
-    </template>
+  <AuthenticationCard>
+    <ValidationErrors class="mb-4" />
 
-    <jet-validation-errors class="mb-4" />
-
-    <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+    <div v-if="status" class="font-medium text-sm mb-4 text-green-600">
       {{ status }}
     </div>
 
     <form @submit.prevent="submit">
       <div>
-        <jet-label for="email" value="Email" />
-        <jet-input
-          id="email"
-          type="email"
-          class="mt-1 block w-full"
-          v-model="form.email"
-          required
-          autofocus
-        />
+        <Label for="email" value="Email" />
+        <Input id="email" type="email" class="mt-1" v-model="form.email" required autofocus />
       </div>
 
       <div class="mt-4">
-        <jet-label for="password" value="Password" />
-        <jet-input
+        <Label for="password" value="Password" />
+        <Input
           id="password"
           type="password"
-          class="mt-1 block w-full"
           v-model="form.password"
           required
           autocomplete="current-password"
+          class="mt-1"
         />
       </div>
 
-      <div class="block mt-4">
+      <div class="mt-4 block">
         <label class="flex items-center">
-          <jet-checkbox name="remember" v-model:checked="form.remember" />
-          <span class="ml-2 text-sm text-gray-600">Remember me</span>
+          <Checkbox name="remember" v-model:checked="form.remember" />
+          <span class="text-sm ml-2 text-gray-600">Remember me</span>
         </label>
       </div>
 
-      <div class="flex items-center justify-end mt-4">
-        <inertia-link
+      <div class="flex mt-4 items-center justify-end">
+        <RouteLink
           v-if="canResetPassword"
-          :href="route('password.request')"
-          class="underline text-sm text-gray-600 hover:text-gray-900"
+          route="password.request"
+          class="text-sm text-gray-600 underline hover:text-gray-900"
         >
           Forgot your password?
-        </inertia-link>
+        </RouteLink>
 
-        <jet-button
-          class="ml-4"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.processing"
-        >
-          Log in
-        </jet-button>
+        <Button class="ml-4" :disabled="form.processing" type="submit"> Log in </Button>
       </div>
     </form>
-  </jet-authentication-card>
+  </AuthenticationCard>
 </template>
 
 <script lang="ts">
 import { useForm } from '@inertiajs/inertia-vue3';
 import { defineComponent } from 'vue';
 
-import JetAuthenticationCard from '@/Jetstream/AuthenticationCard.vue';
-import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo.vue';
-import JetButton from '@/Jetstream/Button.vue';
-import JetInput from '@/Jetstream/Input.vue';
-import JetCheckbox from '@/Jetstream/Checkbox.vue';
-import JetLabel from '@/Jetstream/Label.vue';
-import JetValidationErrors from '@/Jetstream/ValidationErrors.vue';
+import AuthenticationCard from '@/components/AuthenticationCard.vue';
+import Button from '@/components/Elements/Button.vue';
+import Checkbox from '@/components/Elements/Checkbox.vue';
+import Input from '@/components/Elements/Input.vue';
+import Label from '@/components/Elements/Label.vue';
+import RouteLink from '@/components/Elements/RouteLink.vue';
+import ValidationErrors from '@/components/ValidationErrors.vue';
 
 export default defineComponent({
   components: {
-    JetAuthenticationCard,
-    JetAuthenticationCardLogo,
-    JetButton,
-    JetInput,
-    JetCheckbox,
-    JetLabel,
-    JetValidationErrors,
+    AuthenticationCard,
+    Button,
+    Checkbox,
+    Input,
+    Label,
+    RouteLink,
+    ValidationErrors,
   },
 
   props: {
@@ -92,8 +75,6 @@ export default defineComponent({
   },
 
   setup() {
-    const { route } = window;
-
     const form = useForm({
       email: '',
       password: '',
@@ -106,12 +87,12 @@ export default defineComponent({
           ...data,
           remember: form.remember ? 'on' : '',
         }))
-        .post(route('login'), {
+        .post(window.route('login'), {
           onFinish: () => form.reset('password'),
         });
     };
 
-    return { form, submit, route };
+    return { form, submit };
   },
 });
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <jet-form-section @submitted="updateProfileInformation">
+  <FormSection @submitted="updateProfileInformation">
     <template #title> Profile Information </template>
 
     <template #description> Update your account's profile information and email address. </template>
@@ -10,21 +10,21 @@
         <!-- Profile Photo File Input -->
         <input type="file" class="hidden" ref="photo" @change="updatePhotoPreview" />
 
-        <jet-label for="photo" value="Photo" />
+        <Label for="photo" value="Photo" />
 
         <!-- Current Profile Photo -->
         <div class="mt-2" v-show="!photoPreview">
           <img
             :src="user.profile_photo_url"
             :alt="user.name"
-            class="rounded-full h-20 w-20 object-cover"
+            class="rounded-full object-cover h-20 w-20"
           />
         </div>
 
         <!-- New Profile Photo Preview -->
         <div class="mt-2" v-show="photoPreview">
           <span
-            class="block rounded-full w-20 h-20"
+            class="rounded-full h-20 w-20 block"
             :style="
               'background-size: cover; background-repeat: no-repeat; background-position: center center; background-image: url(\'' +
               photoPreview +
@@ -34,51 +34,43 @@
           </span>
         </div>
 
-        <jet-secondary-button class="mt-2 mr-2" type="button" @click.prevent="selectNewPhoto">
+        <Button variant="secondary" class="mt-2 mr-2" @click.prevent="selectNewPhoto">
           Select A New Photo
-        </jet-secondary-button>
+        </Button>
 
-        <jet-secondary-button
-          type="button"
+        <Button
+          v-if="user.profile_photo_path"
+          variant="secondary"
           class="mt-2"
           @click.prevent="deletePhoto"
-          v-if="user.profile_photo_path"
         >
           Remove Photo
-        </jet-secondary-button>
+        </Button>
 
-        <jet-input-error :message="form.errors.photo" class="mt-2" />
+        <InputError :message="form.errors.photo" class="mt-2" />
       </div>
 
       <!-- Name -->
       <div class="col-span-6 sm:col-span-4">
-        <jet-label for="name" value="Name" />
-        <jet-input
-          id="name"
-          type="text"
-          class="mt-1 block w-full"
-          v-model="form.name"
-          autocomplete="name"
-        />
-        <jet-input-error :message="form.errors.name" class="mt-2" />
+        <Label for="name" value="Name" />
+        <Input id="name" type="text" class="mt-1" v-model="form.name" autocomplete="name" />
+        <InputError :message="form.errors.name" class="mt-2" />
       </div>
 
       <!-- Email -->
       <div class="col-span-6 sm:col-span-4">
-        <jet-label for="email" value="Email" />
-        <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" />
-        <jet-input-error :message="form.errors.email" class="mt-2" />
+        <Label for="email" value="Email" />
+        <Input id="email" type="email" class="mt-1" v-model="form.email" />
+        <InputError :message="form.errors.email" class="mt-2" />
       </div>
     </template>
 
     <template #actions>
-      <jet-action-message :on="form.recentlySuccessful" class="mr-3"> Saved. </jet-action-message>
+      <ActionMessage :on="form.recentlySuccessful" class="mr-3"> Saved. </ActionMessage>
 
-      <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-        Save
-      </jet-button>
+      <Button :disabled="form.processing" type="submit"> Save </Button>
     </template>
-  </jet-form-section>
+  </FormSection>
 </template>
 
 <script lang="ts">
@@ -86,23 +78,21 @@ import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/inertia-vue3';
 import { defineComponent, PropType, ref } from 'vue';
 
-import JetButton from '@/Jetstream/Button.vue';
-import JetFormSection from '@/Jetstream/FormSection.vue';
-import JetInput from '@/Jetstream/Input.vue';
-import JetInputError from '@/Jetstream/InputError.vue';
-import JetLabel from '@/Jetstream/Label.vue';
-import JetActionMessage from '@/Jetstream/ActionMessage.vue';
-import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue';
+import ActionMessage from '@/components/ActionMessage.vue';
+import Button from '@/components/Elements/Button.vue';
+import FormSection from '@/components/FormSection.vue';
+import Input from '@/components/Elements/Input.vue';
+import InputError from '@/components/Elements/InputError.vue';
+import Label from '@/components/Elements/Label.vue';
 
 export default defineComponent({
   components: {
-    JetActionMessage,
-    JetButton,
-    JetFormSection,
-    JetInput,
-    JetInputError,
-    JetLabel,
-    JetSecondaryButton,
+    ActionMessage,
+    Button,
+    FormSection,
+    Input,
+    InputError,
+    Label,
   },
 
   props: {
@@ -162,6 +152,7 @@ export default defineComponent({
 
     return {
       form,
+      photo,
       photoPreview,
       selectNewPhoto,
       updatePhotoPreview,

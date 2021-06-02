@@ -6,7 +6,7 @@
       leave-to-class="opacity-0"
     >
       <div v-show="on" class="text-sm text-gray-600">
-        <slot />
+        <slot></slot>
       </div>
     </transition>
   </div>
